@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/humanityLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/white" >
+
+    <ImageView
+        android:id="@+id/humanityThumbImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"  />
+
+    <LinearLayout
+        android:id="@+id/mainContentLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/humanityThumbImg"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/humanityTitle"
+            style="@style/categoryColumnTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="2"
+            android:ellipsize="end" />
+
+        <View
+            android:id="@+id/humanityLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginTop="10dip"
+            android:background="#999999" />
+
+        <TextView
+            android:id="@+id/humanityTime"
+            style="@style/categoryColumnTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/humanityContent"
+        style="@style/categoryColumnContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/humanityThumbImg"
+        android:ellipsize="end"
+        android:lines="10" />
+
+</RelativeLayout>

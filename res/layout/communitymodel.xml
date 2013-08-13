@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ImageView
+        android:id="@+id/communityBgImg"
+        android:layout_width="match_parent"
+        android:layout_height="360dip"
+        android:scaleType="centerCrop" />
+
+    <RelativeLayout
+        android:id="@+id/communityAnimPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-160dip"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="105dip"
+            android:background="@drawable/white"
+            android:orientation="vertical" >
+
+            <TextView
+                style="@style/categoryDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/white"
+                android:gravity="center"
+                android:layout_marginTop="20dip"
+                android:text="@string/community_desc" />
+
+            <View
+                android:id="@+id/landscapeLine"
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginTop="10dip"
+                android:background="#999999" />
+            
+            <com.cidesign.jianghomestylephone.widget.CommunityRelativeLayout
+                android:id="@+id/communityRelativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip" >
+
+               <android.support.v4.view.ViewPager
+                    android:id="@+id/communityViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="330dip"
+                    android:padding="20dip" />
+
+                <ImageButton
+                    android:id="@+id/communityPreClick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/arrow_left"
+                    android:visibility="invisible" />
+
+                <ImageButton
+                    android:id="@+id/communityNextClick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/arrow_right"
+                    android:visibility="invisible" />
+            </com.cidesign.jianghomestylephone.widget.CommunityRelativeLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/temple_roof" />
+
+            <!-- =======================================页尾===================================== -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/footer_bg" >
+
+                <ImageView
+                    android:id="@+id/backgroundTitleImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dip"
+                    android:background="@drawable/title_text_project_background" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/background_bg_text" />
+
+                <TextView
+                    android:id="@+id/backgroundContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/backgroundTitleImg"
+                    android:layout_margin="30dip"
+                    android:text="@string/tks_unit_text"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:id="@+id/tks_unit_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/backgroundContent"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/markor" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="60dip"
+                        android:background="@drawable/hnu" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dip"
+                android:background="@drawable/copyright_bg" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="@string/copyright"
+                    android:textColor="#999999"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/section_title_shequ" />
+    </RelativeLayout>
+
+</merge>

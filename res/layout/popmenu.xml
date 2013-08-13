@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:gravity="center"
+    android:background="@drawable/top_menu_bg">
+
+    <Button
+        android:id="@+id/topLandscapeMenuBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pop_menu"
+        android:text="@string/landscape"
+        style="@style/topMenu" />
+
+     <Button
+        android:id="@+id/topHumanityMenuBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pop_menu"
+        android:text="@string/humanity"
+        style="@style/topMenu" />
+     
+      <Button
+        android:id="@+id/topStoryMenuBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pop_menu"
+        android:text="@string/story"
+        style="@style/topMenu" />
+      
+       <Button
+        android:id="@+id/topCommunityMenuBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pop_menu"
+        android:text="@string/community"
+        style="@style/topMenu" />
+</LinearLayout>

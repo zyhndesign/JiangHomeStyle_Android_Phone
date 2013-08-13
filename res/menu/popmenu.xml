@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/landscape"
+        android:title="@string/landscape"/>
+    <item
+        android:id="@+id/humanity"
+        android:title="@string/humanity"/>
+    <item
+        android:id="@+id/story"
+        android:title="@string/story"/>
+    <item
+        android:id="@+id/community"
+        android:title="@string/community"/>
+
+</menu>

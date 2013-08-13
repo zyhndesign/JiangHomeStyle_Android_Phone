@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/landscapeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/white">
+
+    <ImageView
+        android:id="@+id/landscapeThumbImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"  />
+
+    <LinearLayout
+        android:id="@+id/mainContentLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/landscapeThumbImg"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/landscapeTitle"
+            style="@style/categoryColumnTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="2"
+            android:ellipsize="end" />
+
+        <View
+            android:id="@+id/landscapeLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_marginTop="10dip"
+            android:background="#999999" />
+
+        <TextView
+            android:id="@+id/landscapeTime"
+            style="@style/categoryColumnTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/landscapeContent"
+        style="@style/categoryColumnContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/landscapeThumbImg"
+        android:ellipsize="end"
+        android:lines="10" />
+
+</RelativeLayout>
