@@ -43,7 +43,7 @@ public class WidgetCache
 
 	public void init(Activity activity)
 	{
-		viewCache.put(R.id.loadingProgressBar, (ProgressBar) activity.findViewById(R.id.loadingProgressBar));
+		
 		// 主界面的控件元素
 		CustomScrollView scrollView = (CustomScrollView) activity.findViewById(R.id.mainScrollView);
 		viewCache.put(R.id.mainScrollView, scrollView);

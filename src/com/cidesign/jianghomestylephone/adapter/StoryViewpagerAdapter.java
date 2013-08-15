@@ -105,8 +105,16 @@ public class StoryViewpagerAdapter extends PagerAdapter
 			ImageView storyBgImg = (ImageView) activity.findViewById(R.id.storyBgImg);
 			if (position == 0 && cEntity.getMax_bg_img() != null && !cEntity.getMax_bg_img().equals(""))
 			{
-				bitMap = LoadingImageTools.getImageBitmap(StorageUtils.FILE_ROOT + cEntity.getServerID() + "/"
-						+ cEntity.getMax_bg_img());
+				String fileDir = StorageUtils.FILE_ROOT + cEntity.getServerID() + "/"+ cEntity.getMax_bg_img();
+				File file = new File(fileDir);
+				if (file.exists() && fileDir.endsWith(".jpg"))
+				{
+					bitMap = LoadingImageTools.getImageBitmap(fileDir);
+				}
+				else
+				{
+					bitMap = LoadingImageTools.loadingNative(activity.getApplicationContext(), "bg5.jpg");
+				}
 			}
 			else
 			{
@@ -118,7 +126,7 @@ public class StoryViewpagerAdapter extends PagerAdapter
 			}
 
 			ImageView img = (ImageView) view.findViewById(R.id.storyFirstImg);
-			getThumbImage(cEntity,img,R.id.communityThumbImg,position);
+			getThumbImage(cEntity,img,R.id.storyFirstImg,position);
 			
 			TextView tv1 = (TextView) view.findViewById(R.id.storyFirstTitle);
 			tv1.setText(cEntity.getTitle());
@@ -191,7 +199,7 @@ public class StoryViewpagerAdapter extends PagerAdapter
 			        
 			        public void callback(String url, File file, AjaxStatus status) {
 			                
-			        	Bitmap bm = LoadingImageTools.loadingNative(activity.getApplicationContext(),filePathDir + cEntity.getServerID()+".jpg");
+			        	Bitmap bm = LoadingImageTools.getImageBitmap(filePathDir + cEntity.getServerID()+".jpg");
 			        	if (bm != null && view != null)
 						{
 							view.setImageBitmap(bm);

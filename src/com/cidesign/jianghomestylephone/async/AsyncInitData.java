@@ -1,5 +1,6 @@
 package com.cidesign.jianghomestylephone.async;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import android.app.ProgressDialog;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,8 +49,6 @@ public class AsyncInitData extends AsyncTask<Void, Void, Object[]>
 	private LoadingDataFromDB loadingDataFromDB = null;
 	private DatabaseHelper dbHelper;
 	private LayoutInflater inflater = null;
-
-	private ProgressBar progressBar = null;
 
 	private HashMap<Integer, View> widgetCache;
 
@@ -78,6 +78,8 @@ public class AsyncInitData extends AsyncTask<Void, Void, Object[]>
 
 	private ProgressDialog mypDialog = null;
 
+	private LoadingImageTools loadingImg = new LoadingImageTools();
+	
 	public AsyncInitData(Activity activity, DatabaseHelper dbHelper, LayoutInflater inflater, int screenWidth)
 	{
 		this.activity = activity;
@@ -205,8 +207,6 @@ public class AsyncInitData extends AsyncTask<Void, Void, Object[]>
 		{
 			ContentEntity cEntity = topFourList.get(0);
 
-			LoadingImageTools loadingImg = new LoadingImageTools();
-
 			ImageView homeBgImg = (ImageView) widgetCache.get(R.id.homeBigBg);
 			final VideoView mVideoView = (VideoView) widgetCache.get(R.id.videoView);
 
@@ -221,60 +221,70 @@ public class AsyncInitData extends AsyncTask<Void, Void, Object[]>
 				{
 					final String videoPath = "file://" + StorageUtils.FILE_ROOT + cEntity.getServerID() + "/"
 							+ cEntity.getMax_bg_img();
-					homeBgImg.setVisibility(View.GONE);
-					mVideoView.setVisibility(View.VISIBLE);
-					mVideoView.setVideoPath(videoPath);
-					mVideoView.start();
-					mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
+					File file = new File(videoPath);
+					if (file.exists())
 					{
-
-						@Override
-						public void onPrepared(MediaPlayer mp)
+						homeBgImg.setVisibility(View.GONE);
+						mVideoView.setVisibility(View.VISIBLE);
+						mVideoView.setVideoPath(videoPath);
+						mVideoView.start();
+						mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener()
 						{
-							mp.start();
-							mp.setLooping(true);
 
-						}
-					});
+							@Override
+							public void onPrepared(MediaPlayer mp)
+							{
+								mp.start();
+								mp.setLooping(true);
 
-					mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
+							}
+						});
+
+						mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
+						{
+
+							@Override
+							public void onCompletion(MediaPlayer mp)
+							{
+								mVideoView.setVideoPath(videoPath);
+								mVideoView.start();
+
+							}
+						});
+
+						mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener()
+						{
+
+							@Override
+							public boolean onError(MediaPlayer mp, int what, int extra)
+							{
+								Toast.makeText(activity, "无法播放背景视频文件!", Toast.LENGTH_LONG).show();
+								return true;
+							}
+						});
+					}
+					else
 					{
-
-						@Override
-						public void onCompletion(MediaPlayer mp)
-						{
-							mVideoView.setVideoPath(videoPath);
-							mVideoView.start();
-
-						}
-					});
-
-					mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener()
-					{
-
-						@Override
-						public boolean onError(MediaPlayer mp, int what, int extra)
-						{
-							Toast.makeText(activity, "无法播放背景视频文件!", Toast.LENGTH_LONG).show();
-							return true;
-						}
-					});
+						loadImage(homeBgImg,cEntity);
+					}
+				}
+				else
+				{
+					loadImage(homeBgImg,cEntity);
 				}
 			}
 			else
 			{
-				homeBgImg.setVisibility(View.VISIBLE);
-				loadingImg
-						.loadingImage(homeBgImg, StorageUtils.FILE_ROOT + cEntity.getServerID() + "/" + cEntity.getMax_bg_img());
+				loadImage(homeBgImg,cEntity);
 			}
 			((TextView) widgetCache.get(R.id.homeArticleTitle)).setText(cEntity.getTitle());
-			((TextView) widgetCache.get(R.id.homeArticleTime)).setText(TimeTools.getTimeByTimestap(Long.parseLong(cEntity.getTimestamp())));
+			((TextView) widgetCache.get(R.id.homeArticleTime)).setText(TimeTools.getTimeByTimestap(Long.parseLong(cEntity
+					.getTimestamp())));
 			((LinearLayout) widgetCache.get(R.id.homeLinearLayout)).setTag(cEntity);
 			if (topFourList.size() >= 2)
 			{
 				CategoryDataLoadingLogic cdLogic = new CategoryDataLoadingLogic();
-				cdLogic.loadHeadLineData(topFourList, (LinearLayout) widgetCache.get(R.id.recommandLayout),
-						screenWidth, inflater); // 初始化头条
+				cdLogic.loadHeadLineData(topFourList, (LinearLayout) widgetCache.get(R.id.recommandLayout), screenWidth, inflater); // 初始化头条
 			}
 		}
 
@@ -313,9 +323,24 @@ public class AsyncInitData extends AsyncTask<Void, Void, Object[]>
 			communityViewpagerAdapter.getList().addAll(communityList);
 			communityViewPager.setAdapter(communityViewpagerAdapter);
 		}
-		if(mypDialog != null)
+		if (mypDialog != null)
 		{
 			mypDialog.dismiss();
+		}
+	}
+	
+	private void loadImage(ImageView homeBgImg,ContentEntity cEntity)
+	{
+		homeBgImg.setVisibility(View.VISIBLE);
+		String fileDir = StorageUtils.FILE_ROOT + cEntity.getServerID() + "/" + cEntity.getMax_bg_img();
+		File file = new File(fileDir);
+		if (file.exists())
+		{
+			loadingImg.loadingImage(homeBgImg, StorageUtils.FILE_ROOT + cEntity.getServerID() + "/" + cEntity.getMax_bg_img());
+		}
+		else
+		{
+			loadingImg.loadingNativeImage(activity, homeBgImg, "bg1.jpg");
 		}
 	}
 }

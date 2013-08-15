@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -58,7 +59,7 @@ public class ArticalOperation
 				if (HttpStatus.SC_OK == status.getCode())
 				{
 					listFile = XmlAndJsonParseTools.parseListByJson(html);
-
+					
 					if (listFile.size() > 0)
 					{
 						String time = "0";
@@ -99,6 +100,10 @@ public class ArticalOperation
 						editor.putString("lastUpdateTime", time);
 						editor.commit();
 					}
+				}
+				else
+				{
+					Toast.makeText(activity, "Çë´ò¿ªÍøÂç£¡", Toast.LENGTH_LONG).show();
 				}
 			}
 		});

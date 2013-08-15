@@ -123,8 +123,16 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 			Bitmap bitMap = null;
 			if (position == 0 && cEntity.getMax_bg_img() != null && !cEntity.getMax_bg_img().equals(""))
 			{
-				bitMap = LoadingImageTools.getImageBitmap(StorageUtils.FILE_ROOT + cEntity.getServerID() + "/"
-						+ cEntity.getMax_bg_img());
+				String fileDir = StorageUtils.FILE_ROOT + cEntity.getServerID() + "/" + cEntity.getMax_bg_img();
+				File file = new File(fileDir);
+				if (file.exists() && fileDir.endsWith(".jpg"))
+				{
+					bitMap = LoadingImageTools.getImageBitmap(fileDir);
+				}
+				else
+				{
+					bitMap = LoadingImageTools.loadingNative(activity.getApplicationContext(), "bg4.jpg");
+				}
 			}
 			else
 			{
@@ -137,14 +145,14 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 
 			ImageView firstImg = (ImageView) view.findViewById(R.id.landscapeThumbImg);
 			
-			getThumbImage(cEntity,firstImg,R.id.communityThumbImg,position);
+			getThumbImage(cEntity,firstImg,R.id.landscapeThumbImg,position);
 
 			firstImg.setLayoutParams(imageViewLayout);
 
 			TextView tv1 = (TextView) view.findViewById(R.id.landscapeTitle);
 			tv1.setText(cEntity.getTitle());
 			TextView tv2 = (TextView) view.findViewById(R.id.landscapeTime);
-			tv2.setText(TimeTools.getTimeByTimestap(Long.parseLong(cEntity.getPost_date())));
+			tv2.setText(TimeTools.getTimeByTimestap(Long.parseLong(cEntity.getTimestamp())));
 			TextView tv3 = (TextView) view.findViewById(R.id.landscapeContent);
 			tv3.setText(cEntity.getDescription());
 			tv3.setLayoutParams(contentLayout);
@@ -235,7 +243,7 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 			        
 			        public void callback(String url, File file, AjaxStatus status) {
 			                
-			        	Bitmap bm = LoadingImageTools.loadingNative(activity.getApplicationContext(),filePathDir + cEntity.getServerID()+".jpg");
+			        	Bitmap bm = LoadingImageTools.getImageBitmap(filePathDir + cEntity.getServerID()+".jpg");
 			        	if (bm != null && view != null)
 						{
 							view.setImageBitmap(bm);
