@@ -7,8 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.cidesign.jianghomestylephone.R;
-import com.cidesign.jianghomestylephone.entity.ArticleEntity;
-import com.cidesign.jianghomestylephone.entity.FileListEntity;
+import com.cidesign.jianghomestylephone.entity.ContentEntity;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
@@ -26,12 +25,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 	private static final int DATABASE_VERSION = 1;
 
 	// the DAO object we use to access the SimpleData table
-	private Dao<FileListEntity, Integer> fileListDao = null;
-	private Dao<ArticleEntity, Integer> articleListDao = null;
-
-	private RuntimeExceptionDao<FileListEntity, Integer> fileListRuntimeDao = null;
-	private RuntimeExceptionDao<ArticleEntity, Integer> articleRuntimeDao = null;
-
+	private Dao<ContentEntity,Integer> fileListDao = null;
+	
+	private RuntimeExceptionDao<ContentEntity, Integer> contentRuntimeDao = null;
+	
 	public DatabaseHelper(Context context)
 	{
 		super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
@@ -48,8 +45,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 		try
 		{
 			Log.i(DatabaseHelper.class.getName(), "onCreate");
-			TableUtils.createTable(connectionSource, FileListEntity.class);
-			TableUtils.createTable(connectionSource, ArticleEntity.class);
+			TableUtils.createTable(connectionSource, ContentEntity.class);
 		}
 		catch (SQLException e)
 		{
@@ -69,8 +65,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 		try
 		{
 			Log.i(DatabaseHelper.class.getName(), "onUpgrade");
-			TableUtils.dropTable(connectionSource, FileListEntity.class, true);
-			TableUtils.dropTable(connectionSource, ArticleEntity.class, true);
+			TableUtils.dropTable(connectionSource, ContentEntity.class, true);
 			// after we drop the old databases, we create the new ones
 			onCreate(db, connectionSource);
 		}
@@ -81,41 +76,24 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 		}
 	}
 
-	public Dao<FileListEntity, Integer> getFileListDao() throws SQLException
+	public Dao<ContentEntity, Integer> getFileListDao() throws SQLException
 	{
 		if (fileListDao == null)
 		{
-			fileListDao = getDao(FileListEntity.class);
+			fileListDao = getDao(ContentEntity.class);
 		}
 		return fileListDao;
 	}
 
-	public RuntimeExceptionDao<FileListEntity, Integer> getFileListDataDao()
+	public RuntimeExceptionDao<ContentEntity, Integer> getContentDataDao()
 	{
-		if (fileListRuntimeDao == null)
+		if (contentRuntimeDao == null)
 		{
-			fileListRuntimeDao = getRuntimeExceptionDao(FileListEntity.class);
+			contentRuntimeDao = getRuntimeExceptionDao(ContentEntity.class);
 		}
-		return fileListRuntimeDao;
+		return contentRuntimeDao;
 	}
-
-	public Dao<ArticleEntity, Integer> getArticleListDao() throws SQLException
-	{
-		if (articleListDao == null)
-		{
-			articleListDao = getDao(ArticleEntity.class);
-		}
-		return articleListDao;
-	}
-
-	public RuntimeExceptionDao<ArticleEntity, Integer> getArticleListDataDao()
-	{
-		if (articleRuntimeDao == null)
-		{
-			articleRuntimeDao = getRuntimeExceptionDao(ArticleEntity.class);
-		}
-		return articleRuntimeDao;
-	}
+	
 
 	/**
 	 * Close the database connections and clear any cached DAOs.
@@ -124,8 +102,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 	public void close()
 	{
 		super.close();
-		fileListRuntimeDao = null;
-		articleRuntimeDao = null;
+		contentRuntimeDao = null;
 	}
-
 }

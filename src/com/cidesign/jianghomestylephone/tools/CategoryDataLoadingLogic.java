@@ -1,5 +1,6 @@
 package com.cidesign.jianghomestylephone.tools;
 
+import java.io.File;
 import java.util.List;
 
 import android.view.LayoutInflater;
@@ -10,14 +11,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.cidesign.jianghomestylephone.R;
-import com.cidesign.jianghomestylephone.entity.ArticleEntity;
+import com.cidesign.jianghomestylephone.entity.ContentEntity;
 import com.cidesign.jianghomestylephone.entity.LayoutEntity;
 
 public class CategoryDataLoadingLogic
 {
 	private static LoadingImageTools loadingImg = new LoadingImageTools();
-
+	private AQuery aq = null;
+	
 	/**
 	 * 根据数据布局头条面板控件
 	 * 
@@ -26,12 +31,12 @@ public class CategoryDataLoadingLogic
 	 * @param screen_width
 	 * @param inflater
 	 */
-	public static void loadHeadLineData(List<ArticleEntity> articleList, LinearLayout headlineLayout, int screen_width,
+	public void loadHeadLineData(List<ContentEntity> articleList, LinearLayout headlineLayout, int screen_width,
 			LayoutInflater inflater)
 	{
 
 		headlineLayout.removeAllViews();
-		ArticleEntity aEntity = null;
+		ContentEntity cEntity = null;
 		int view_width = (screen_width - 40);
 		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		lp.leftMargin = 15;
@@ -53,16 +58,43 @@ public class CategoryDataLoadingLogic
 
 			view.setLayoutParams(lp);
 
-			aEntity = articleList.get(i);
+			aq = new AQuery(view);
+			
+			cEntity = articleList.get(i);
 			ImageView iv = (ImageView) view.findViewById(R.id.recommandImg);
-			loadingImg.loadingImage(iv, StorageUtils.FILE_ROOT + aEntity.getServerID() + "/" + aEntity.getProfile_path());
+			String filePathDir = StorageUtils.THUMB_IMG_ROOT + cEntity.getServerID() + "/";
+			File fileDir = new File(filePathDir);
+			if (!fileDir.exists() || !fileDir.isDirectory())
+				fileDir.mkdir();
+			String fileName = filePathDir + cEntity.getServerID()+".jpg";
+			File file = new File(fileName);
+			if (file.exists())
+			{
+				aq.id(R.id.recommandImg).image(file,400);
+			}
+			else
+			{
+				String url = cEntity.getProfile_path().substring(0,  cEntity.getProfile_path().length() - 4) + JiangFinalVariables.SQUARE_400;            
+				
+				File target = new File(fileDir, cEntity.getServerID()+".jpg");              
+
+				aq.download(url, target, new AjaxCallback<File>(){
+				        
+				        public void callback(String url, File file, AjaxStatus status) {
+				                
+				        	aq.id(R.id.recommandImg).image(file,400); 
+				        }
+				        
+				});
+			}
+			
 			iv.setPadding(0, 0, 0, 25);
 			iv.setLayoutParams(imageViewLayout);
 			TextView tv1 = (TextView) view.findViewById(R.id.recommandTitle);
-			tv1.setText(aEntity.getTitle());
+			tv1.setText(cEntity.getTitle());
 			TextView tv2 = (TextView) view.findViewById(R.id.recommandTime);
-			tv2.setText(TimeTools.getTimeByTimestap(Long.parseLong(aEntity.getPost_date())));
-			view.setTag(aEntity);
+			tv2.setText(TimeTools.getTimeByTimestap(Long.parseLong(cEntity.getTimestamp())));
+			view.setTag(cEntity);
 			headlineLayout.addView(view);
 
 		}

@@ -1,13 +1,19 @@
 package com.cidesign.jianghomestylephone.adapter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 import com.cidesign.jianghomestylephone.DetailActivity;
 import com.cidesign.jianghomestylephone.R;
-import com.cidesign.jianghomestylephone.entity.ArticleEntity;
+import com.cidesign.jianghomestylephone.async.AsyncDownTask;
+import com.cidesign.jianghomestylephone.entity.ContentEntity;
 import com.cidesign.jianghomestylephone.entity.RelativeLayoutRulesEntity;
+import com.cidesign.jianghomestylephone.tools.JiangFinalVariables;
 import com.cidesign.jianghomestylephone.tools.LoadingImageTools;
 import com.cidesign.jianghomestylephone.tools.StorageUtils;
 import com.cidesign.jianghomestylephone.tools.TimeTools;
@@ -32,12 +38,14 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 
 	private HashMap<Integer, Bitmap> bitHashMap = new HashMap<Integer, Bitmap>();
 
-	private List<ArticleEntity> list = new ArrayList<ArticleEntity>();
+	private List<ContentEntity> list = new ArrayList<ContentEntity>();
 
 	private int screenWidth;
 
 	private Activity activity;
 
+	private AQuery aq = null;
+	
 	public void setScreenWidth(int screenWidth)
 	{
 		this.screenWidth = screenWidth;
@@ -48,7 +56,7 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 		this.activity = activity;
 	}
 
-	public List<ArticleEntity> getList()
+	public List<ContentEntity> getList()
 	{
 		return list;
 	}
@@ -94,7 +102,7 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 	{
 		LayoutInflater inflater = LayoutInflater.from(activity.getApplicationContext());
 		View view = inflater.inflate(R.layout.landscape_template, null);
-
+		aq = new AQuery(view);
 		try
 		{
 			RelativeLayout.LayoutParams imageViewLayout = LayoutCaculateAdapter.getRelativeLayout((screenWidth / 2 ), 2);
@@ -108,15 +116,15 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 			RelativeLayout.LayoutParams contentLayout = LayoutCaculateAdapter.getRelativeRectangleLayout((screenWidth - 100), 2,
 					rulesEntity);
 
-			ArticleEntity aEntity = null;
+			ContentEntity cEntity = null;
 
-			aEntity = list.get(position);
+			cEntity = list.get(position);
 			ImageView landscapeBgImg = (ImageView) activity.findViewById(R.id.landscapeBgImg);
 			Bitmap bitMap = null;
-			if (position == 0 && aEntity.getMax_bg_img() != null && !aEntity.getMax_bg_img().equals(""))
+			if (position == 0 && cEntity.getMax_bg_img() != null && !cEntity.getMax_bg_img().equals(""))
 			{
-				bitMap = LoadingImageTools.getImageBitmap(StorageUtils.FILE_ROOT + aEntity.getServerID() + "/"
-						+ aEntity.getMax_bg_img());
+				bitMap = LoadingImageTools.getImageBitmap(StorageUtils.FILE_ROOT + cEntity.getServerID() + "/"
+						+ cEntity.getMax_bg_img());
 			}
 			else
 			{
@@ -128,31 +136,25 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 			}
 
 			ImageView firstImg = (ImageView) view.findViewById(R.id.landscapeThumbImg);
-			bitMap = LoadingImageTools.getImageBitmap(StorageUtils.FILE_ROOT + aEntity.getServerID() + "/"
-					+ aEntity.getProfile_path());
-			firstImg.setImageBitmap(bitMap);
-			if (bitMap != null)
-			{
-				firstImg.setImageBitmap(bitMap);
-				bitHashMap.put(position, bitMap);
-			}
+			
+			getThumbImage(cEntity,firstImg,R.id.communityThumbImg,position);
 
 			firstImg.setLayoutParams(imageViewLayout);
 
 			TextView tv1 = (TextView) view.findViewById(R.id.landscapeTitle);
-			tv1.setText(aEntity.getTitle());
+			tv1.setText(cEntity.getTitle());
 			TextView tv2 = (TextView) view.findViewById(R.id.landscapeTime);
-			tv2.setText(TimeTools.getTimeByTimestap(Long.parseLong(aEntity.getPost_date())));
+			tv2.setText(TimeTools.getTimeByTimestap(Long.parseLong(cEntity.getPost_date())));
 			TextView tv3 = (TextView) view.findViewById(R.id.landscapeContent);
-			tv3.setText(aEntity.getDescription());
+			tv3.setText(cEntity.getDescription());
 			tv3.setLayoutParams(contentLayout);
-			tv3.setTag(aEntity);
+			tv3.setTag(cEntity);
 			tv3.setOnClickListener(new ClickPop());
 			LinearLayout mainContentLayout = ((LinearLayout) view.findViewById(R.id.mainContentLayout));
 			mainContentLayout.setLayoutParams(textLayout);
-			mainContentLayout.setTag(aEntity);
+			mainContentLayout.setTag(cEntity);
 			mainContentLayout.setOnClickListener(new ClickPop());
-			firstImg.setTag(aEntity);
+			firstImg.setTag(cEntity);
 			firstImg.setOnClickListener(new ClickPop());
 			((ViewPager) context).addView(view);
 		}
@@ -187,12 +189,61 @@ public class LandscapeViewpagerAdapter extends PagerAdapter
 		@Override
 		public void onClick(View v)
 		{
-			ArticleEntity aEntity = (ArticleEntity) v.getTag();
-			String url = "file://" + StorageUtils.FILE_ROOT + aEntity.getServerID() + "/doc/main.phone.html";
-			Intent intent = new Intent(activity, DetailActivity.class);
-			intent.putExtra("url", url);
-			intent.putExtra("title", aEntity.getTitle());
-			activity.startActivity(intent);
+			if (v.getTag() != null && (v.getTag() instanceof ContentEntity))
+			{
+				ContentEntity aEntity = (ContentEntity) v.getTag();
+				if(aEntity.getDownloadFlag() == 1)
+				{
+					openDetailContent(aEntity);
+				}
+				else
+				{
+					new AsyncDownTask(activity,aEntity).execute();
+				}
+			}
+		}		
+	}
+	
+	private void openDetailContent(ContentEntity aEntity)
+	{
+		String url = "file://" + StorageUtils.FILE_ROOT + aEntity.getServerID() + "/doc/main.phone.html";
+		Intent intent = new Intent(activity, DetailActivity.class);
+		intent.putExtra("url", url);
+		intent.putExtra("title", aEntity.getTitle());
+		activity.startActivity(intent);
+	}
+	
+	private void getThumbImage(final ContentEntity cEntity,final ImageView view,int id,final int position)
+	{
+		final String filePathDir = StorageUtils.THUMB_IMG_ROOT + cEntity.getServerID() + "/";
+		File fileDir = new File(filePathDir);
+		if (!fileDir.exists() || !fileDir.isDirectory())
+			fileDir.mkdir();
+		String fileName = filePathDir + cEntity.getServerID()+".jpg";
+		File file = new File(fileName);
+		if (file.exists())
+		{
+			aq.id(id).image(file,400);
+		}
+		else
+		{
+			String url = cEntity.getProfile_path().substring(0,  cEntity.getProfile_path().length() - 4) + JiangFinalVariables.SQUARE_400;             
+			Log.d(TAG, url);
+			File target = new File(fileDir, cEntity.getServerID()+".jpg");              
+
+			aq.download(url, target, new AjaxCallback<File>(){
+			        
+			        public void callback(String url, File file, AjaxStatus status) {
+			                
+			        	Bitmap bm = LoadingImageTools.loadingNative(activity.getApplicationContext(),filePathDir + cEntity.getServerID()+".jpg");
+			        	if (bm != null && view != null)
+						{
+							view.setImageBitmap(bm);
+							bitHashMap.put(position, bm);
+						}
+			        }
+			        
+			});
 		}
 	}
 }

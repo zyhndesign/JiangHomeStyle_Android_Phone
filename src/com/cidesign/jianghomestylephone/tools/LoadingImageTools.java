@@ -41,31 +41,7 @@ public class LoadingImageTools
 
 		@Override
 		protected Bitmap doInBackground(String... params)
-		{
-			/*
-			Bitmap bm = null;
-			File file = new File(params[0]);
-			InputStream is;
-			try
-			{
-				is = new FileInputStream(file);
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inJustDecodeBounds = false;
-				options.inSampleSize = 5; // width，hight设为原来的十分一
-				options.inTempStorage = new byte[1024 * 1024]; // 12k
-				bm = BitmapFactory.decodeStream(is, null, options);
-
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			catch (java.lang.OutOfMemoryError e)
-			{
-				e.printStackTrace();
-			}
-			*/
-			
+		{			
 			return getImageBitmap(params[0]);
 		}
 
@@ -216,7 +192,7 @@ public class LoadingImageTools
 			is = ctx.getAssets().open(path);
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inJustDecodeBounds = false;
-			options.inSampleSize = 3;
+			options.inSampleSize = 2;
 			options.inTempStorage = new byte[12 * 1024]; // 12k
 			bm = BitmapFactory.decodeStream(is, null, options);
 		}
